@@ -26,9 +26,56 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
-    const housesCollection = client.db("houseRental").collection("houses")
-    const usersCollection = client.db("houseRental").collection("users")
+    const housesCollection = client.db("houseHunter").collection("houses")
+    const usersCollection = client.db("houseHunter").collection("users")
 
+
+    // Total Houses
+    app.get("/total-houses" , async(req,res)=>{
+        const result = await housesCollection.estimatedDocumentCount();
+        res.send({totalHouse: result});
+    })
+
+    // Houses Collection
+    app.get("/houses", async(req,res)=>{
+      const queryParams = req.query;
+      const filter = {};
+
+      if (queryParams.city) {
+        filter.city = queryParams.city;
+      }
+      if (queryParams.bedrooms) {
+        filter.bedrooms = parseInt(queryParams.bedrooms);
+      }
+      if (queryParams.bathrooms) {
+        filter.bathrooms = parseInt(queryParams.bathrooms);
+      }
+      if (queryParams.roomSize) {
+        filter.
+        room_size = queryParams.roomSize;
+      }
+      if (queryParams.availabilityFrom) {
+        filter.availability_date = {};
+        if (queryParams.availabilityFrom) {
+          filter.availability_date = queryParams.availabilityFrom;
+        }
+
+      }
+      if (queryParams.minRent || queryParams.maxRent) {
+        filter.rent_per_month= {};
+        if (queryParams.minRent) {
+          filter.rent_per_month.$gte = parseInt(queryParams.minRent);
+        }
+        if (queryParams.maxRent) {
+          filter.rent_per_month.$lte = parseInt(queryParams.maxRent);
+        }
+      }
+
+      const houses = await housesCollection.find(filter).toArray();
+      res.send(houses)
+
+        
+    })
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
