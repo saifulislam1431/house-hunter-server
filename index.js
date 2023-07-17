@@ -38,7 +38,11 @@ async function run() {
 
     // Houses Collection
     app.get("/houses", async(req,res)=>{
+      const page = parseInt(req.query.page);
+            const limit = parseInt(req.query.limit);
+            const skip = page * limit;
       const queryParams = req.query;
+
       const filter = {};
 
       if (queryParams.city) {
@@ -71,7 +75,7 @@ async function run() {
         }
       }
 
-      const houses = await housesCollection.find(filter).toArray();
+      const houses = await housesCollection.find(filter).skip(skip).limit(limit).toArray();
       res.send(houses)
 
         
