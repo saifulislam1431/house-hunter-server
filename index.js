@@ -139,7 +139,7 @@ app.post('/user/sigUp', async (req, res) => {
     const token = jwt.sign({ email, role }, process.env.ACCESS_TOKEN);
 
     // Return the token and user details
-    res.status(201).json({ token, email, fullName, role });
+    res.status(201).json({ token, email, name, role,photo });
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ message: 'Failed to register' });
@@ -175,8 +175,8 @@ app.post('/user/login', async (req, res) => {
 });
 
 // Get user details
-app.get('/user/:email', verifyToken, async (req, res) => {
-  const { email } = req.email;
+app.get('/user', verifyToken, async (req, res) => {
+  const { email } = req.user;
 
   try {
     // Fetch the user details
