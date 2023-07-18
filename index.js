@@ -81,6 +81,20 @@ async function run() {
         
     })
 
+    // Search Api
+    const indexKeys = { city: 1 };
+        const indexOptions = { name: "title" }
+        const result = await housesCollection.createIndex(indexKeys, indexOptions);
+    app.get("/houses-by-location/:text",async(req,res)=>{
+      const text = req.params.text;
+      const result = await housesCollection.find({
+        $or:[
+          { city: { $regex: text, $options: "i" } }
+        ]
+      }).toArray()
+      res.send(result)
+    })
+
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     console.log("Server successfully connected to MongoDB!");
