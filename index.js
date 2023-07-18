@@ -14,11 +14,11 @@ app.use(express.json())
 
 
 const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization;
-  if (!token) {
+  const authorization = req.headers.authorization;
+  if (!authorization) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
-
+  const token = authorization.split(' ')[1]
   jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
     if (err) {
       return res.status(401).json({ message: 'Invalid token' });
@@ -186,7 +186,7 @@ app.get('/user', verifyToken, async (req, res) => {
     }
 
     // Return the user details
-    res.status(200).json({ email: user.email, name: user.name, role: user.role, photo: user.photo });
+    res.status(200).json({ email: user.email, name: user.name, role: user.role, photo: user.photo, phone:user.phone });
   } catch (error) {
     console.error('User details error:', error);
     res.status(500).json({ message: 'Failed to fetch user details' });
