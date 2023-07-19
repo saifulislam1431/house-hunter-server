@@ -44,6 +44,7 @@ async function run() {
 
     const housesCollection = client.db("houseHunter").collection("houses")
     const usersCollection = client.db("houseHunter").collection("users")
+    const bookingCollection = client.db("houseHunter").collection("bookings")
 
 
     // Total Houses
@@ -214,6 +215,20 @@ app.delete("/delete-house/:id", verifyToken, async(req,res)=>{
       const query = { _id: new ObjectId(id) }
       const result = await housesCollection.deleteOne(query)
       res.send(result);
+})
+// Add house booking
+app.post("/bookings" ,async(req,res)=>{
+const data = req.body;
+const userEmail = data.userEmail;
+const loadData = await bookingCollection.find({userEmail:userEmail}).toArray();
+if(loadData.length === 2){
+  return res.json("You can't booking more then two house. If your want add new house please cancel one booking from previous bookings.")
+}else{
+  const result = await bookingCollection.insertOne(data)
+  return res.send(result)
+}
+
+
 })
 
 
