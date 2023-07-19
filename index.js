@@ -216,6 +216,38 @@ app.delete("/delete-house/:id", verifyToken, async(req,res)=>{
       const result = await housesCollection.deleteOne(query)
       res.send(result);
 })
+
+// Update API
+
+app.put("/update-houses/:id", async (req, res) => {
+  const id = req.params.id;
+  const filter = { _id: new ObjectId(id) };
+  const options = { upsert: true }
+  const newData = req.body;
+  const updateDoc = {
+    $set: {
+      address: newData.address,
+
+      availability_date: newData.availability_date,
+
+      bathrooms: newData.bathrooms,
+      bedrooms: newData.bedrooms,
+
+      city: newData.city,
+      description: newData.description,
+      email: newData.email,
+      name: newData.name,
+
+      phone_number: newData.phone_number,
+      picture: newData.picture,
+      rent_per_month: newData.rent_per_month,
+      room_size: newData.room_size,
+    }
+  }
+  const result = await housesCollection.updateOne(filter, updateDoc, options)
+  res.send(result)
+})
+
 // Add house booking
 app.post("/bookings" ,async(req,res)=>{
 const data = req.body;
