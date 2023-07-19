@@ -227,8 +227,14 @@ if(loadData.length === 2){
   const result = await bookingCollection.insertOne(data)
   return res.send(result)
 }
+})
 
-
+// Get booking data
+app.get("/bookings",async(req,res)=>{
+  const email = req.query.email;
+  const query = {userEmail: email};
+  const result = await bookingCollection.find(query).toArray();
+  res.send(result)
 })
 
 
