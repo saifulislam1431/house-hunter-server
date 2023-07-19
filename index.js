@@ -3,7 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 const app = express();
 
@@ -192,6 +192,29 @@ app.get('/user', verifyToken, async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch user details' });
   }
 });
+
+// Houses by user email
+app.get("/houses-by", verifyToken, async(req,res)=>{
+const email = req.query.email;
+const query = {email: email};
+const result = await housesCollection.find(query).toArray();
+res.send(result)
+})
+
+// Add new House API
+app.post("/new-house",async(req,res)=>{
+  const newData = req.body;
+  const result = await housesCollection.insertOne(newData);
+  res.send(result)
+})
+
+// Delete API
+app.delete("/delete-house/:id", verifyToken, async(req,res)=>{
+  const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await housesCollection.deleteOne(query)
+      res.send(result);
+})
 
 
     // Send a ping to confirm a successful connection
